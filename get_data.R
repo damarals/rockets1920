@@ -24,7 +24,7 @@ schedules <- r |>
   rvest::html_elements(xpath = "//li") |>
   rvest::html_attr("id")
 
-# Obtenção dos Dados Jogada a Jogada (Play-by-Play - PBP)
+# Obtenção dos Dados Jogada a Jogada (Play-by-Play - PBP) ----------------------
 
 ## Barra de Progresso
 progressr::handlers(
@@ -44,10 +44,10 @@ progressr::with_progress({
   future::plan(future::multisession, workers = 5)
   furrr::future_walk2(season_year, schedules, \(season, schedule) {
 
-    # Definição do EndPoint
+    ## Definição do EndPoint
     u <- glue::glue("http://data.nba.net/v2015/json/mobile_teams/nba/{season}/scores/pbp/{schedule}_full_pbp.json")
 
-    # Obtenção do JSON do PBP
+    ## Obtenção do JSON do PBP
     ## Só vão ser printadas no final do Future...
     tryCatch(
       pbp <- jsonlite::fromJSON(txt = u),
@@ -57,7 +57,7 @@ progressr::with_progress({
       },
       error = function(err) message("ERROR: {err}... Pulando para o próximo jogo"))
 
-    # Escrita dos dados localmente
+    ## Escrita dos dados localmente
     filename <- pbp |>
       purrr::pluck('g', 3) |>
       stringr::str_replace('/', '_')
